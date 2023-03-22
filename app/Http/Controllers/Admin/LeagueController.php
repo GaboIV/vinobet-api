@@ -174,23 +174,21 @@ class LeagueController extends ApiController
 
     public function attachNameUk(Request $request, $id) {
         $data = $request->all();
+        $nameUks = explode(",", $data['name_uk']);
 
         $league = League::whereId($id)->first();
+        $leagueNameUks = $league->name_uk ?? [];        
 
-        if (isset($league->name_uk)) {
-            if (! in_array($data['name_uk'], $league->name_uk)){
-                $arrays_name_uk = array_merge($league->name_uk, [$data['name_uk']]);
-    
-                $league->update([
-                    "name_uk" => $arrays_name_uk
-                ]);
-            }    
-        } else {
-        	$league->update([
-                "name_uk" => [$data['name_uk']]
-            ]);
-        }         
+        foreach ($nameUks as $key => $nameUk) {
+            if (!in_array($nameUk, $leagueNameUks) && trim($nameUk) != ""){
+                $leagueNameUks[] = $nameUk;
+            }   
+        }    
 
+        $league->update([
+            "name_uk" => $leagueNameUks
+        ]);
+            
         return $this->successResponse([
             'league' => $league
         ], 200);
