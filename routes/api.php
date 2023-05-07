@@ -6,11 +6,12 @@ use Illuminate\Support\Facades\Route;
 Route::post('images', 'General\GeneralController@imageUploadPost')->name('image.upload.post');
 
 Route::group(['prefix' => 'auth'], function () {
-    // Login de jugador y administrador
+    // Login for players and admins
     Route::post('/login', 'Auth\LoginController@login');
 
-    // Registro de jugador
+    // Register for players
     Route::post('/register', 'Auth\RegisterController@createPlayer');
+    Route::get('register/valid/{type}/{value}', 'Auth\RegisterController@validValue');
 });
 
 Route::group(['prefix' => 'public'], function () {
@@ -58,7 +59,7 @@ Route::group(['prefix' => 'public'], function () {
 });
 
 Route::group(['middleware' => 'auth:api'], function () {
-	// Cerrar sesión
+    // Cerrar sesión
     Route::get('auth/logout', 'Auth\LoginController@logout');
 
     // Rutas de Administrador
@@ -172,8 +173,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         });
     });
 
-	// Jugadores
-	Route::group(['prefix' => 'player'], function () {
+    // Jugadores
+    Route::group(['prefix' => 'player'], function () {
         Route::get('/selections/load', 'Api\SessionController@loadSelections');
         Route::get('/transactions', 'Api\PlayerController@getTransactions');
         Route::post('/selections/add', 'Api\SessionController@select');
@@ -185,7 +186,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/ticket/load', 'Api\TicketController@loadTickets');
         Route::put('/updates/personal', 'Api\PlayerController@updatePersonal');
         Route::put('/updates/complement', 'Api\PlayerController@updatePersonal');
-		Route::post('/pays', 'Api\PlayerController@registerPay');
-		Route::get('/pays', 'Api\PlayerController@getPays');
-	});
+        Route::post('/pays', 'Api\PlayerController@registerPay');
+        Route::get('/pays', 'Api\PlayerController@getPays');
+    });
 });

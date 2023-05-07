@@ -86,13 +86,26 @@ class PlayerRequest extends FormRequest
             // 'browser' => 'string',
             // 'ip' => 'string'
         ];
+
+        $document_type = request('document_type');
+
+        if ($document_type && $document_type != 'null') {
+            $document_number = request('document_number');
+
+            $rules['document_number'] .= "|" . Rule::unique('players')->where(function ($query) use ($document_type, $document_number) {
+                return $query->where('document_type', $document_type)
+                    ->where('document_number', $document_number);
+            })->ignore(request()->id);
+        }
+
         if ($this->isMethod('PUT')) {
             $currentUser = Auth::user()->person->id;
-	        $rules['password'] = '';
+            $rules['password'] = '';
             $rules['email'] = 'string|email|unique:users,email,' . $currentUser;
             $rules['phone'] = 'numeric|unique:players,phone,' . $currentUser;
             $rules['document_number'] = 'required|numeric';
         }
+
         return $rules;
     }
 
