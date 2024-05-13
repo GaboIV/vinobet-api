@@ -45,6 +45,8 @@ class SyncLeagueJob implements ShouldQueue
                 ]]);
     
                 $url = 'https://sports.tipico.de/json/program/selectedEvents/all/' . $sync_id . "/?apiVersion=1";
+
+                \Log::info($url); 
     
                 $data = json_decode($client->request('GET', $url)->getBody())->SELECTION ?? null;
     
@@ -106,7 +108,7 @@ class SyncLeagueJob implements ShouldQueue
                             "teams_id" => (array) $teams_id,
                         ]);
 
-                        if (is_null($match->result)) {
+                        if (is_null($match->result) && isset($data->matchOddGroups->{$game->id})) {
                             foreach ($data->matchOddGroups->{$game->id} as $key => $option_type) {
 
                                 $bet_type = BetType::whereName($key)->first();

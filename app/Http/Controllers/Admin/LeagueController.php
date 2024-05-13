@@ -37,8 +37,6 @@ class LeagueController extends ApiController
                 \Log::info($url); 
     
                 $data = json_decode($client->request('GET', $url)->getBody())->SELECTION ?? null;
-
-                \Log::info($data); 
     
                 $key_sport = key($data->availableMarkets);
 
@@ -98,7 +96,7 @@ class LeagueController extends ApiController
                             "teams_id" => (array) $teams_id,
                         ]);
         
-                        if (is_null($match->result)) {
+                        if (is_null($match->result) && isset($data->matchOddGroups->{$game->id})) {
                             foreach ($data->matchOddGroups->{$game->id} as $key => $option_type) {
 
                                 $bet_type = BetType::whereName($key)->first();
