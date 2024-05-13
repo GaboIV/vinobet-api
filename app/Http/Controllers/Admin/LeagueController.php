@@ -21,13 +21,24 @@ class LeagueController extends ApiController
 
         if ($league->name_uk) {
             foreach ($league->name_uk as $key => $sync_id) {
-                $client = new \GuzzleHttp\Client(['verify' => false, 'headers' => [
-                    'Content-Type' => 'text/plain'
-                ]]);
+                $client = new \GuzzleHttp\Client([
+                    'verify' => false,
+                    'headers' => [
+                        'Content-Type' => 'text/plain'
+                    ],
+                    'curl' => [
+                        CURLOPT_VERBOSE => true,
+                        CURLOPT_STDERR => fopen(storage_path('logs/curl.log'), 'w'),
+                    ],
+                ]);
     
                 $url = 'https://sports.tipico.de/json/program/selectedEvents/all/' . $sync_id . "/?apiVersion=1";
+
+                \Log::info($url); 
     
                 $data = json_decode($client->request('GET', $url)->getBody())->SELECTION ?? null;
+
+                \Log::info($data); 
     
                 $key_sport = key($data->availableMarkets);
 
