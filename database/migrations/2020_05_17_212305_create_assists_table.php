@@ -17,8 +17,8 @@ class CreateAssistsTable extends Migration
             $table->bigIncrements('id');
             $table->string('type');
 
-            $table->unsignedBigInteger('admin_id');
-            $table->foreign('admin_id')
+            $table->unsignedBigInteger('admin_id')->nullable();
+            $table->foreign('admin_id')->nullable()
                 ->references('id')
                 ->on('users');
 
